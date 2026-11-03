@@ -1,0 +1,7 @@
+{
+  "PythonPath": "runtime/venv/Scripts/python.exe",
+  "SourceRoot": "runtime/GPT-SoVITS",
+  "TtsConfigPath": "runtime/private/tts.yaml",
+  "ReferenceDir": "runtime/private/reference",
+  "LauncherScript": ""
+}

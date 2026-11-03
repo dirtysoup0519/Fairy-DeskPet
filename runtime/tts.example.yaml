@@ -1,0 +1,9 @@
+# Template only. Replace each path locally; never commit a filled-in config.
+custom:
+  bert_base_path: /local/models/chinese-roberta-wwm-ext-large
+  cnhuhbert_base_path: /local/models/chinese-hubert-base
+  device: cuda
+  is_half: true
+  t2s_weights_path: /local/weights/user-gpt.ckpt
+  version: v2
+  vits_weights_path: /local/weights/user-sovits.pth
