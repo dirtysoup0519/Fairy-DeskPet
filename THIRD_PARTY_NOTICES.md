@@ -22,7 +22,13 @@ GPT-SoVITS 由用户另外配置，未内嵌其运行源码、发行版或模型
 
 第三方运行时、依赖和模型分别受其自身条款约束。运行时代码的许可不能推定模型、声音或训练数据可再分发。
 
-## 不分发的内容
+## 屏幕协作参考
+
+帧变化评分与有界关键帧管线参考 [dsh-see-now](https://github.com/SAOS-3624/dsh-see-now/tree/c1af8c9ad623d368396ac35b9ea2aa4cf306e7c4) 的设计（Copyright 2026 SAOS-3624，Apache-2.0）。本项目在 `ScreenCapture.cs` 用 C# 实现简化的 HSV 评分和两帧缓存，其他采集、WPF 控制与模型接入为本地宿主整合。保留 `licenses/dsh-see-now-LICENSE.txt` 和 `licenses/dsh-see-now-NOTICE.txt`。未复制其截图、演示视频、打赏码、FFmpeg 或模型。
+
+原项目 NOTICE 只说明它自身的行为。本应用会在用户开启或手动分析后把截图发送到选择的模型入口，不能借上游声明宣传“截图永不离开本机”。具体边界见 [屏幕协作说明](docs/SCREEN_ASSIST.md)。
+
+## 不分发的内容与项目范围
 
 模型、权重、基础模型、声码器、ASR / 分离模型、训练集、参考录音、游戏语音、视频音轨及其处理结果均不进入 Git，也不通过 LFS、Release 或压缩包上传。
 

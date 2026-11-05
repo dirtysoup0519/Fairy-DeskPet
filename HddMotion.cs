@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -40,7 +40,8 @@ public sealed class FairyFrame : FrameworkElement {
     double progress;
     public double Progress {get{return progress;}set{progress=value;InvalidateVisual();}}
     public bool ToRight;
-    protected override void OnRender(DrawingContext dc){DrawRing(dc,new Point(ActualWidth/2,ActualHeight/2),Math.Min(ActualWidth,ActualHeight)/2-3,progress);}
+    public bool ScreenWatching;
+    protected override void OnRender(DrawingContext dc){DrawRing(dc,new Point(ActualWidth/2,ActualHeight/2),Math.Min(ActualWidth,ActualHeight)/2-3,progress);if(ScreenWatching)dc.DrawEllipse(Ui.Brush("#FFB545"),new Pen(Ui.Brush("#171717"),2),new Point(ActualWidth-10,10),5,5);}
     public static void DrawRing(DrawingContext dc,Point center,double radius,double progress){if(progress<=0||radius<1)return;var scale=.92+.08*progress;
         dc.PushOpacity(progress);dc.PushTransform(new ScaleTransform(scale,scale,center.X,center.Y));
         // The sprite has a translucent glow. A solid backing prevents a growing
@@ -50,9 +51,12 @@ public sealed class FairyFrame : FrameworkElement {
     }
 }
 public sealed class HddInputSurface : Border {
+    public bool TerminalShell;
     protected override void OnRender(DrawingContext dc){var w=ActualWidth;var h=ActualHeight;if(w<120||h<80)return;
         var shell=new StreamGeometry();using(var p=shell.Open()){p.BeginFigure(new Point(7,47),true,true);p.BezierTo(new Point(7,17),new Point(12,5),new Point(39,5),true,false);p.LineTo(new Point(149,5),true,false);p.LineTo(new Point(165,21),true,false);p.LineTo(new Point(w-32,21),true,false);p.BezierTo(new Point(w-9,21),new Point(w-7,34),new Point(w-7,47),true,false);p.LineTo(new Point(w-7,h-30),true,false);p.BezierTo(new Point(w-7,h-9),new Point(w-20,h-7),new Point(w-32,h-7),true,false);p.LineTo(new Point(32,h-7),true,false);p.BezierTo(new Point(9,h-7),new Point(7,h-20),new Point(7,h-30),true,false);}
-        dc.DrawGeometry(Ui.Brush("#090909"),new Pen(Ui.Brush("#080909"),6),shell);dc.DrawGeometry(new LinearGradientBrush(Color.FromRgb(48,48,48),Color.FromRgb(28,28,28),90),new Pen(Ui.Brush("#555654"),2),shell);
+        if(!TerminalShell)dc.DrawGeometry(Ui.Brush("#090909"),new Pen(Ui.Brush("#080909"),6),shell);
+        dc.DrawGeometry(new LinearGradientBrush(Color.FromRgb(48,48,48),Color.FromRgb(28,28,28),90),new Pen(Ui.Brush("#555654"),2),shell);
+        if(TerminalShell)return;
         dc.DrawRoundedRectangle(Ui.Brush("#111111"),new Pen(Ui.Brush("#080808"),4),new Rect(16,56,w-32,h-70),17,17);
         dc.PushClip(new RectangleGeometry(new Rect(19,60,w-38,h-77),13,13));
         dc.DrawRectangle(new LinearGradientBrush(Color.FromRgb(29,29,29),Color.FromRgb(24,24,24),90),null,new Rect(19,60,w-38,h-106));

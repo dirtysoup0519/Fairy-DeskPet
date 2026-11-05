@@ -7,6 +7,7 @@ $petErrors=New-Object System.Collections.Generic.List[string]
 $petBytes=0
 foreach($petRelative in $petPaths){
     $petNormalized=$petRelative.Replace('\','/')
+    if($petNormalized -match '(?i)(^|/)(screen-cache|screen-captures|screenshots|captures)(/|$)|(^|/)screen-memory\.dat' -or ($petNormalized -match '(?i)\.png$' -and $petNormalized -notmatch '^assets/frames/[0-9]{3}\.png$')){$petErrors.Add("Unreviewed screenshot or private memory: $petRelative");continue}
     if($petNormalized -match '(?i)(^|/)(local|private|backups|\.vscode|\.idea|\.codex|\.dsh|\.workbuddy|automations?|scheduled-tasks?|task-scheduler|scheduler|tasks-local|tasks|task-exports|scheduler-exports|automation-state|cron\.d|plans|memory|sessions)(/|$)' -or
        $petNormalized -match '(?i)(^|/)(tasks\.json|launch\.json|crontab(?:\..*)?)$|\.(task|job|ics)$|\.local\.' -or
        $petNormalized -match '(?i)(scheduled[-_]?tasks?|task[-_]?scheduler|schtasks|计划任务|任务计划).*(\.(xml|json|toml|ya?ml|csv|txt|ps1|bat|cmd))$' -or

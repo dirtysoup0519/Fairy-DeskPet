@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
@@ -32,13 +32,13 @@ public static class Ui {
       <Trigger Property='IsMouseOver' Value='True'><Setter TargetName='Plate' Property='BorderBrush' Value='#78D5F1'/></Trigger><Trigger Property='IsPressed' Value='True'><Setter TargetName='Plate' Property='Opacity' Value='.65'/></Trigger><Trigger Property='IsEnabled' Value='False'><Setter TargetName='Plate' Property='Opacity' Value='.4'/></Trigger><Trigger Property='IsKeyboardFocused' Value='True'><Setter TargetName='Plate' Property='BorderBrush' Value='#D2F566'/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>");
     public static readonly ResourceDictionary Controls=(ResourceDictionary)XamlReader.Parse(@"<ResourceDictionary xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>
       <Style TargetType='Slider'><Setter Property='Height' Value='22'/><Setter Property='Template'><Setter.Value><ControlTemplate TargetType='Slider'><Grid Background='Transparent'><Track x:Name='PART_Track' Minimum='{TemplateBinding Minimum}' Maximum='{TemplateBinding Maximum}' Value='{Binding Value, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}'>
-      <Track.DecreaseRepeatButton><RepeatButton Command='Slider.DecreaseLarge' Focusable='False'><RepeatButton.Template><ControlTemplate><Border Height='4' Background='#7AD6F0' CornerRadius='2'/></ControlTemplate></RepeatButton.Template></RepeatButton></Track.DecreaseRepeatButton>
-      <Track.Thumb><Thumb Width='14' Height='14'><Thumb.Template><ControlTemplate><Border Background='#A0E2F4' BorderBrush='#6BAEC5' BorderThickness='1' CornerRadius='2'/></ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
-      <Track.IncreaseRepeatButton><RepeatButton Command='Slider.IncreaseLarge' Focusable='False'><RepeatButton.Template><ControlTemplate><Border Height='4' Background='#2A3A48' CornerRadius='2'/></ControlTemplate></RepeatButton.Template></RepeatButton></Track.IncreaseRepeatButton>
+      <Track.DecreaseRepeatButton><RepeatButton Command='Slider.DecreaseLarge' Focusable='False'><RepeatButton.Template><ControlTemplate><Border Height='4' Background='#FFC844' CornerRadius='2'/></ControlTemplate></RepeatButton.Template></RepeatButton></Track.DecreaseRepeatButton>
+      <Track.Thumb><Thumb Width='14' Height='14'><Thumb.Template><ControlTemplate><Border Background='#FFDC7E' BorderBrush='#A18136' BorderThickness='1' CornerRadius='2'/></ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
+      <Track.IncreaseRepeatButton><RepeatButton Command='Slider.IncreaseLarge' Focusable='False'><RepeatButton.Template><ControlTemplate><Border Height='4' Background='#454543' CornerRadius='2'/></ControlTemplate></RepeatButton.Template></RepeatButton></Track.IncreaseRepeatButton>
       </Track></Grid></ControlTemplate></Setter.Value></Setter></Style>
       <Style TargetType='ScrollBar'><Setter Property='Width' Value='7'/><Setter Property='Background' Value='Transparent'/><Setter Property='Template'><Setter.Value><ControlTemplate TargetType='ScrollBar'><Grid Background='{TemplateBinding Background}'><Track x:Name='PART_Track' Orientation='Vertical' IsDirectionReversed='True' Minimum='{TemplateBinding Minimum}' Maximum='{TemplateBinding Maximum}' ViewportSize='{TemplateBinding ViewportSize}' Value='{Binding Value, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}'>
       <Track.DecreaseRepeatButton><RepeatButton Command='ScrollBar.PageUpCommand' Opacity='0' Focusable='False'/></Track.DecreaseRepeatButton>
-      <Track.Thumb><Thumb MinHeight='20'><Thumb.Template><ControlTemplate><Border Background='#405A6D' CornerRadius='3' Margin='1'/></ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
+      <Track.Thumb><Thumb MinHeight='20'><Thumb.Template><ControlTemplate><Border Background='#62615C' CornerRadius='3' Margin='1'/></ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
       <Track.IncreaseRepeatButton><RepeatButton Command='ScrollBar.PageDownCommand' Opacity='0' Focusable='False'/></Track.IncreaseRepeatButton>
       </Track></Grid></ControlTemplate></Setter.Value></Setter></Style>
       </ResourceDictionary>");
@@ -69,7 +69,7 @@ public sealed class FairyHint : Window {
     readonly DispatcherTimer writer=new DispatcherTimer(),expiry=new DispatcherTimer(),advance=new DispatcherTimer();readonly Stopwatch clock=new Stopwatch();
     readonly List<string> pages=new List<string>();readonly List<double> cueStarts=new List<double>();readonly Stopwatch speechClock=new Stopwatch();int page,position;int[] ends=new int[0];string current="";bool followingSpeech;double speechSeconds,pageSeconds,maxWidth=650,joinInset;Window anchor;
     public FairyHint(Action<double,bool> frame=null){
-        Title="Fairy · HDD 字幕";WindowStyle=WindowStyle.None;ResizeMode=ResizeMode.NoResize;AllowsTransparency=true;Background=Brushes.Transparent;ShowInTaskbar=false;Topmost=true;ShowActivated=false;Width=490;Height=76;Content=card;card.Child=body;
+        Title="Fairy · HDD 字幕";WindowStyle=WindowStyle.None;ResizeMode=ResizeMode.NoResize;AllowsTransparency=true;Background=Brushes.Transparent;ShowInTaskbar=Program.UiCheck;Topmost=true;ShowActivated=false;Width=490;Height=76;Content=card;card.Child=body;
         copy.FontStyle=FontStyles.Italic;copy.FontWeight=FontWeights.ExtraBold;copy.TextWrapping=TextWrapping.NoWrap;copy.VerticalAlignment=VerticalAlignment.Center;copy.Margin=new Thickness(27,0,27,0);body.Children.Add(copy);System.Windows.Automation.AutomationProperties.SetName(copy,"Fairy 字幕，点击展开或继续，右键收回");
         motion=new HddMotion((f,r)=>{card.Reveal=r;body.Clip=new RectangleGeometry(RevealRect(Width,Height,r,card.OpensRight));if(frame!=null)frame(f,card.OpensRight);},open=>{if(open)StartContent();else Hide();});
         writer.Interval=TimeSpan.FromMilliseconds(16);writer.Tick+=(s,e)=>UpdateTypewriter();advance.Tick+=(s,e)=>{advance.Stop();if(page+1<pages.Count){page++;SetPage();}};expiry.Tick+=(s,e)=>Dismiss();
@@ -103,64 +103,165 @@ public sealed class FairyHint : Window {
     public double TextSize {get{return copy.FontSize;}}public bool TextFits {get{return Measure(current,copy.FontSize)<=Width-54-joinInset;}}
 }
 public sealed partial class Pet {
-    FairyHint hint;TextBlock panelStatus;Button connectionApply;ScrollViewer settingsScroll;Slider idleIntervalSlider;Action showSettings=()=>{},showConnection=()=>{},refreshPetSize=()=>{};
+    FairyHint hint;TextBlock panelStatus;Button connectionApply;ScrollViewer settingsScroll;Slider idleIntervalSlider;Action showSettings=()=>{},showConnection=()=>{},showAppearance=()=>{},showGameSettings=()=>{},refreshPetSize=()=>{};
     void SetPetSize(double value,bool save) {
         if(double.IsNaN(value)||double.IsInfinity(value))value=180;
         value=Math.Max(32,Math.Min(DockLayout.MaximumSize(DockLayout.Area(this)),Math.Round(value)));prefs.Scale=value;eye.Width=value;eye.Height=value;Width=value+24;Height=value+24;
         if(IsLoaded){Clamp();RepositionPopups();}refreshPetSize();if(save&&!Program.Preview)SavePosition();
     }
+    static readonly Style TerminalButtonStyle=(Style)XamlReader.Parse(@"<Style xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml' TargetType='Button'>
+      <Setter Property='Foreground' Value='#CDCDC7'/><Setter Property='Background' Value='#222222'/>
+      <Setter Property='BorderBrush' Value='#555654'/><Setter Property='BorderThickness' Value='1'/>
+      <Setter Property='Padding' Value='10,5'/><Setter Property='FontSize' Value='12'/><Setter Property='Cursor' Value='Hand'/>
+      <Setter Property='Template'><Setter.Value><ControlTemplate TargetType='Button'>
+        <Border x:Name='Plate' Background='{TemplateBinding Background}' BorderBrush='{TemplateBinding BorderBrush}' BorderThickness='{TemplateBinding BorderThickness}' Padding='{TemplateBinding Padding}' CornerRadius='3'>
+          <ContentPresenter HorizontalAlignment='Center' VerticalAlignment='Center'/>
+        </Border><ControlTemplate.Triggers>
+          <Trigger Property='IsMouseOver' Value='True'><Setter TargetName='Plate' Property='Background' Value='#3A3937'/></Trigger>
+          <Trigger Property='IsKeyboardFocused' Value='True'><Setter TargetName='Plate' Property='BorderBrush' Value='#FFC844'/></Trigger>
+          <Trigger Property='IsPressed' Value='True'><Setter TargetName='Plate' Property='Opacity' Value='.68'/></Trigger>
+          <Trigger Property='IsEnabled' Value='False'><Setter TargetName='Plate' Property='Opacity' Value='.45'/></Trigger>
+        </ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>");
+    static Button TerminalButton(string label,Action action) {
+        var button=Ui.Button(label,action);button.Style=TerminalButtonStyle;return button;
+    }
+    static TextBlock TerminalCaption(string text) {
+        var caption=Ui.Caption(text);caption.Foreground=Ui.Brush("#B8B7B2");return caption;
+    }
+
     void OpenPanel(){
         Touch();if(panel!=null){if(!Program.Preview){panel.Show();panel.Activate();}return;}
-        panel=new Window {Title="Fairy · H.D.D 对话终端",Width=540,Height=740,MinWidth=480,MinHeight=620,WindowStyle=WindowStyle.None,ResizeMode=ResizeMode.CanResize,Background=Ui.Brush("#0C131B"),Foreground=Brushes.White,WindowStartupLocation=WindowStartupLocation.CenterScreen,FontFamily=new FontFamily("Microsoft YaHei UI")};
-        System.Windows.Shell.WindowChrome.SetWindowChrome(panel,new System.Windows.Shell.WindowChrome {CaptionHeight=0,ResizeBorderThickness=new Thickness(5),GlassFrameThickness=new Thickness(0),UseAeroCaptionButtons=false});
+        panel=new Window {Title="Fairy · H.D.D 对话终端",Width=540,Height=740,MinWidth=480,MinHeight=620,WindowStyle=WindowStyle.None,ResizeMode=ResizeMode.CanResize,AllowsTransparency=true,Background=Brushes.Transparent,Foreground=Brushes.White,WindowStartupLocation=WindowStartupLocation.CenterScreen,FontFamily=new FontFamily("Microsoft YaHei UI")};
+        System.Windows.Shell.WindowChrome.SetWindowChrome(panel,new System.Windows.Shell.WindowChrome {CaptionHeight=0,ResizeBorderThickness=new Thickness(13,10,13,13),GlassFrameThickness=new Thickness(0),UseAeroCaptionButtons=false});
         panel.Resources.MergedDictionaries.Add(Ui.Controls);
-        var frame=new Border {Background=Ui.Brush("#0C131B"),BorderBrush=Ui.Brush("#3D566C"),BorderThickness=new Thickness(1)};var layout=new Grid();frame.Child=layout;panel.Content=frame;
-        foreach(var height in new[]{52.0,69,45,-1,34})layout.RowDefinitions.Add(new RowDefinition {Height=height<0?new GridLength(1,GridUnitType.Star):new GridLength(height)});
-        var title=new DockPanel {Background=Ui.Brush("#121E2A"),LastChildFill=true};title.MouseLeftButtonDown+=(s,e)=>{if(e.ClickCount==1)panel.DragMove();};
-        var close=Ui.Button("×",()=>panel.Close());close.Width=42;close.Margin=new Thickness(0);close.Padding=new Thickness(0);close.BorderThickness=new Thickness(0);close.Background=Brushes.Transparent;DockPanel.SetDock(close,Dock.Right);title.Children.Add(close);
-        var minimize=Ui.Button("—",()=>panel.WindowState=WindowState.Minimized);minimize.Width=42;minimize.Margin=new Thickness(0);minimize.Padding=new Thickness(0);minimize.BorderThickness=new Thickness(0);minimize.Background=Brushes.Transparent;DockPanel.SetDock(minimize,Dock.Right);title.Children.Add(minimize);
-        var name=Ui.Text("FAIRY",23,"#DCEBF2");name.FontWeight=FontWeights.Bold;name.Margin=new Thickness(22,0,14,0);name.VerticalAlignment=VerticalAlignment.Center;DockPanel.SetDock(name,Dock.Left);title.Children.Add(name);var heading=Ui.Caption("H.D.D / DESKTOP LINK");heading.VerticalAlignment=VerticalAlignment.Center;title.Children.Add(heading);layout.Children.Add(title);
+        var frame=new HddInputSurface {TerminalShell=true,Padding=new Thickness(17,5,17,11)};
+        var layout=new Grid {UseLayoutRounding=true};frame.Child=layout;panel.Content=frame;
+        foreach(var height in new[]{50.0,52,37,-1,29})layout.RowDefinitions.Add(new RowDefinition {Height=height<0?new GridLength(1,GridUnitType.Star):new GridLength(height)});
+        var title=new DockPanel {LastChildFill=true};
+        title.MouseLeftButtonDown+=(s,e)=>{if(e.ClickCount==1&&e.ButtonState==MouseButtonState.Pressed)panel.DragMove();};
+        var close=TerminalButton("×",()=>{if(Program.UiCheck)Close();else panel.Close();});close.Width=36;close.Margin=new Thickness(0,20,5,4);close.Padding=new Thickness(0);close.BorderThickness=new Thickness(0);close.Background=Brushes.Transparent;DockPanel.SetDock(close,Dock.Right);title.Children.Add(close);
+        var minimize=TerminalButton("—",()=>panel.WindowState=WindowState.Minimized);minimize.Width=36;minimize.Margin=new Thickness(0,20,3,4);minimize.Padding=new Thickness(0);minimize.BorderThickness=new Thickness(0);minimize.Background=Brushes.Transparent;DockPanel.SetDock(minimize,Dock.Right);title.Children.Add(minimize);
+        var name=Ui.Text("FAIRY",23,"#F4F3EE");name.FontWeight=FontWeights.Black;name.FontStyle=FontStyles.Italic;name.Margin=new Thickness(12,0,43,0);name.VerticalAlignment=VerticalAlignment.Center;DockPanel.SetDock(name,Dock.Left);title.Children.Add(name);var heading=TerminalCaption("H.D.D. / 对话终端");heading.VerticalAlignment=VerticalAlignment.Center;title.Children.Add(heading);layout.Children.Add(title);
         providers=new ComboBox {ItemsSource=new[]{"Codex","DeepSeek"},SelectedItem=prefs.Provider};
-        var switcher=new Grid {Margin=new Thickness(22,13,14,13)};switcher.ColumnDefinitions.Add(new ColumnDefinition());switcher.ColumnDefinitions.Add(new ColumnDefinition());switcher.ColumnDefinitions.Add(new ColumnDefinition{Width=GridLength.Auto});
-        var codex=Ui.Button("CODEX / 订阅",()=>providers.SelectedItem="Codex");var deepseek=Ui.Button("DEEPSEEK / API",()=>{providers.SelectedItem="DeepSeek";if(apiKey!=null&&string.IsNullOrWhiteSpace(apiKey.Password))showConnection();});switcher.Children.Add(codex);Grid.SetColumn(deepseek,1);switcher.Children.Add(deepseek);var configureKey=Ui.Button("配置 Key",()=>{providers.SelectedItem="DeepSeek";showConnection();});configureKey.Padding=new Thickness(10,9,10,9);Grid.SetColumn(configureKey,2);switcher.Children.Add(configureKey);Grid.SetRow(switcher,1);layout.Children.Add(switcher);
-        var tabs=new StackPanel {Orientation=Orientation.Horizontal,Margin=new Thickness(22,0,22,0)};Button chatTab=null,settingsTab=null;var chat=new Grid {Margin=new Thickness(22,10,22,14)};var settings=new ScrollViewer {Margin=new Thickness(22,10,17,10),VerticalScrollBarVisibility=ScrollBarVisibility.Auto};
-        Action<bool> selectTab=(isSettings)=>{chat.Visibility=isSettings?Visibility.Collapsed:Visibility.Visible;settings.Visibility=isSettings?Visibility.Visible:Visibility.Collapsed;chatTab.Foreground=Ui.Brush(isSettings?"#8196A6":"#94E1F5");settingsTab.Foreground=Ui.Brush(isSettings?"#94E1F5":"#8196A6");chatTab.BorderBrush=isSettings?Brushes.Transparent:Ui.Brush("#6ACDEB");settingsTab.BorderBrush=isSettings?Ui.Brush("#6ACDEB"):Brushes.Transparent;};
-        chatTab=Ui.Button("对话",()=>selectTab(false));settingsTab=Ui.Button("语音与外观",()=>selectTab(true));foreach(var tab in new[]{chatTab,settingsTab}){tab.Background=Brushes.Transparent;tab.Padding=new Thickness(14,5,14,8);tab.BorderThickness=new Thickness(0,0,0,2);tabs.Children.Add(tab);}Grid.SetRow(tabs,2);layout.Children.Add(tabs);Grid.SetRow(chat,3);Grid.SetRow(settings,3);layout.Children.Add(chat);layout.Children.Add(settings);showSettings=()=>selectTab(true);
-        chat.RowDefinitions.Add(new RowDefinition {Height=GridLength.Auto});chat.RowDefinitions.Add(new RowDefinition());chat.RowDefinitions.Add(new RowDefinition {Height=GridLength.Auto});chat.RowDefinitions.Add(new RowDefinition {Height=new GridLength(100)});chat.RowDefinitions.Add(new RowDefinition {Height=GridLength.Auto});chat.RowDefinitions.Add(new RowDefinition {Height=GridLength.Auto});
-        var providerNote=Ui.Caption("");providerNote.Margin=new Thickness(0,0,0,12);chat.Children.Add(providerNote);
-        var reply=new CutCard {Padding=new Thickness(17),Margin=new Thickness(0,0,0,16)};var replyBody=new DockPanel();var speaker=new DockPanel {Margin=new Thickness(0,0,0,12)};
-        var avatar=new Image {Source=frames[0],Width=27,Height=27,Margin=new Thickness(0,0,9,0)};speaker.Children.Add(avatar);var speakerName=Ui.Text("Fairy",17,"#86D9F3");speakerName.FontWeight=FontWeights.Bold;speakerName.VerticalAlignment=VerticalAlignment.Center;speaker.Children.Add(speakerName);DockPanel.SetDock(speaker,Dock.Top);replyBody.Children.Add(speaker);AddSourcesButton(speaker);
-        output=Ui.Box(lastAnswer.Length>0?lastAnswer:"主人，我在。选择入口，我们就可以开始。",0);output.IsReadOnly=true;output.Padding=new Thickness(0,2,0,0);output.BorderThickness=new Thickness(0);output.Background=Brushes.Transparent;output.FontSize=15;output.MinHeight=80;replyBody.Children.Add(output);reply.Child=replyBody;Grid.SetRow(reply,1);chat.Children.Add(reply);
-        var label=Ui.Caption("MESSAGE / 输入消息 · Ctrl+Enter 发送");label.Margin=new Thickness(0,0,0,8);Grid.SetRow(label,2);chat.Children.Add(label);
-        input=Ui.Box("",100);input.MaxLength=4000;input.PreviewKeyDown+=(s,e)=>{Touch();if(e.Key==Key.Enter&&Keyboard.Modifiers==ModifierKeys.Control){e.Handled=true;Ask();}};Grid.SetRow(input,3);chat.Children.Add(input);
-        var mainActions=new DockPanel {LastChildFill=false,Margin=new Thickness(0,12,0,10)};send=Ui.Button("发送  ↗",Ask);send.Background=Ui.Brush("#D2F566");send.Foreground=Ui.Brush("#152014");send.BorderBrush=Ui.Brush("#D2F566");send.MinWidth=110;DockPanel.SetDock(send,Dock.Right);send.Margin=new Thickness(8,0,0,0);mainActions.Children.Add(send);
-        var stop=Ui.Button("停止",()=>{StopChat();StopSpeech();});DockPanel.SetDock(stop,Dock.Right);stop.Margin=new Thickness(8,0,0,0);mainActions.Children.Add(stop);var readInput=Ui.Button("朗读输入",()=>Speak(input.Text,null));readInput.FontSize=12;readInput.Padding=new Thickness(9,9,9,9);DockPanel.SetDock(readInput,Dock.Left);mainActions.Children.Add(readInput);
-        var replay=Ui.Button("重播回复",()=>{if(lastAnswer.Length>0)Speak(lastAnswer,null);});replay.FontSize=12;replay.Padding=new Thickness(9,9,9,9);DockPanel.SetDock(replay,Dock.Left);mainActions.Children.Add(replay);Grid.SetRow(mainActions,4);chat.Children.Add(mainActions);
-        readAnswers=Ui.Check("回复后自动朗读（前 600 字）",prefs.ReadAnswers,value=>{prefs.ReadAnswers=value;SaveUi();});Grid.SetRow(readAnswers,5);chat.Children.Add(readAnswers);
-        settingsScroll=settings;var settingsBody=new StackPanel {Margin=new Thickness(0,0,7,10)};settings.Content=settingsBody;settingsBody.Children.Add(WebSettings());
-        var sizeSection=Ui.Section("桌宠大小","APPEARANCE / 连续调节");var sizeLabel=Ui.Text(((int)prefs.Scale)+" px",20,"#8EDFF7");sizeSection.Children.Add(sizeLabel);
+        var switcher=new Grid {Margin=new Thickness(9,7,1,7)};switcher.ColumnDefinitions.Add(new ColumnDefinition());switcher.ColumnDefinitions.Add(new ColumnDefinition());switcher.ColumnDefinitions.Add(new ColumnDefinition{Width=GridLength.Auto});
+        var codex=TerminalButton("CODEX / 订阅",()=>providers.SelectedItem="Codex");var deepseek=TerminalButton("DEEPSEEK / API",()=>{providers.SelectedItem="DeepSeek";if(apiKey!=null&&string.IsNullOrWhiteSpace(apiKey.Password))showConnection();});switcher.Children.Add(codex);Grid.SetColumn(deepseek,1);switcher.Children.Add(deepseek);var configureKey=TerminalButton("配置 Key",()=>{providers.SelectedItem="DeepSeek";showConnection();});configureKey.Padding=new Thickness(10,9,10,9);Grid.SetColumn(configureKey,2);switcher.Children.Add(configureKey);Grid.SetRow(switcher,1);layout.Children.Add(switcher);
+        var tabs=new StackPanel {Orientation=Orientation.Horizontal,Margin=new Thickness(9,0,9,0)};Button chatTab=null,settingsTab=null;var chat=new Grid {Margin=new Thickness(9,8,9,3)};var settings=new ScrollViewer {Margin=new Thickness(11,0,0,0),VerticalScrollBarVisibility=ScrollBarVisibility.Auto};
+        var settingsLayout=new Grid {Margin=new Thickness(9,8,6,8)};
+        settingsLayout.ColumnDefinitions.Add(new ColumnDefinition {Width=new GridLength(105)});
+        settingsLayout.ColumnDefinitions.Add(new ColumnDefinition());
+        var navigation=new StackPanel();
+        var navigationFrame=new Border {Child=navigation,Background=Ui.Brush("#181818"),
+            BorderBrush=Ui.Brush("#555654"),BorderThickness=new Thickness(1),CornerRadius=new CornerRadius(7),Padding=new Thickness(5)};
+        settingsLayout.Children.Add(navigationFrame);
+        Grid.SetColumn(settings,1);settingsLayout.Children.Add(settings);
+        Action<bool> selectTab=(isSettings)=>{chat.Visibility=isSettings?Visibility.Collapsed:Visibility.Visible;settingsLayout.Visibility=isSettings?Visibility.Visible:Visibility.Collapsed;chatTab.Foreground=Ui.Brush(isSettings?"#AAA9A3":"#FFC844");settingsTab.Foreground=Ui.Brush(isSettings?"#FFC844":"#AAA9A3");chatTab.BorderBrush=isSettings?Brushes.Transparent:Ui.Brush("#FFC844");settingsTab.BorderBrush=isSettings?Ui.Brush("#FFC844"):Brushes.Transparent;};
+        chatTab=TerminalButton("对话",()=>selectTab(false));settingsTab=TerminalButton("设置",()=>selectTab(true));foreach(var tab in new[]{chatTab,settingsTab}){tab.Background=Brushes.Transparent;tab.Padding=new Thickness(14,5,14,8);tab.BorderThickness=new Thickness(0,0,0,2);tabs.Children.Add(tab);}Grid.SetRow(tabs,2);layout.Children.Add(tabs);Grid.SetRow(chat,3);Grid.SetRow(settingsLayout,3);layout.Children.Add(chat);layout.Children.Add(settingsLayout);showSettings=()=>selectTab(true);
+        chat.RowDefinitions.Add(new RowDefinition {Height=GridLength.Auto});
+        chat.RowDefinitions.Add(new RowDefinition());
+        chat.RowDefinitions.Add(new RowDefinition {Height=GridLength.Auto});
+        chat.RowDefinitions.Add(new RowDefinition {Height=GridLength.Auto});
+        var providerNote=TerminalCaption("");providerNote.Margin=new Thickness(3,0,0,8);chat.Children.Add(providerNote);
+
+        var reply=new CutCard {Fill=Ui.Brush("#151515"),Stroke=Ui.Brush("#555654"),Padding=new Thickness(14),Margin=new Thickness(0,0,0,10)};
+        var replyBody=new DockPanel();
+        var speaker=new DockPanel {Margin=new Thickness(0,0,0,9)};
+        AddSourcesButton(speaker);sourceButton.Style=TerminalButtonStyle;
+        var avatar=new Image {Source=frames[0],Width=25,Height=25,Margin=new Thickness(0,0,8,0)};
+        DockPanel.SetDock(avatar,Dock.Left);speaker.Children.Add(avatar);
+        var speakerName=Ui.Text("FAIRY  /  回复",14,"#F4F3EE");speakerName.FontWeight=FontWeights.Bold;
+        speakerName.FontStyle=FontStyles.Italic;speakerName.VerticalAlignment=VerticalAlignment.Center;speaker.Children.Add(speakerName);
+        DockPanel.SetDock(speaker,Dock.Top);replyBody.Children.Add(speaker);
+        output=Ui.Box(lastAnswer.Length>0?lastAnswer:"主人，我在。输入消息即可开始对话。");
+        output.IsReadOnly=true;output.Padding=new Thickness(0,3,4,0);output.BorderThickness=new Thickness(0);
+        output.Background=Brushes.Transparent;output.Foreground=Ui.Brush("#F1F0EB");output.FontSize=15;output.MinHeight=80;
+        replyBody.Children.Add(output);reply.Child=replyBody;Grid.SetRow(reply,1);chat.Children.Add(reply);
+
+        var commandDeck=new Border {Background=Ui.Brush("#181818"),BorderBrush=Ui.Brush("#555654"),
+            BorderThickness=new Thickness(1),CornerRadius=new CornerRadius(13),Padding=new Thickness(11,8,11,8)};
+        var commandBody=new StackPanel();commandDeck.Child=commandBody;
+        var commandHeading=new DockPanel {Margin=new Thickness(2,0,2,6)};
+        var shortcut=TerminalCaption("Ctrl+Enter 发送");DockPanel.SetDock(shortcut,Dock.Right);commandHeading.Children.Add(shortcut);
+        var commandTitle=Ui.Text("向 FAIRY 发话",13,"#F4F3EE");commandTitle.FontStyle=FontStyles.Italic;
+        commandTitle.FontWeight=FontWeights.Black;commandHeading.Children.Add(commandTitle);commandBody.Children.Add(commandHeading);
+
+        var entry=new Grid();
+        input=Ui.Box("",76);input.MaxLength=4000;input.Background=Ui.Brush("#101010");input.Foreground=Ui.Brush("#F1F0EB");
+        input.BorderBrush=Ui.Brush("#454543");input.CaretBrush=Ui.Brush("#FFC844");input.SelectionBrush=Ui.Brush("#666460");
+        input.Padding=new Thickness(10,8,10,8);
+        System.Windows.Automation.AutomationProperties.SetName(input,"向 Fairy 发话");
+        input.PreviewKeyDown+=(s,e)=>{Touch();if(e.Key==Key.Enter&&Keyboard.Modifiers==ModifierKeys.Control){e.Handled=true;Ask();}};
+        entry.Children.Add(input);
+        var placeholder=Ui.Text("在这里输入你的指令…",14,"#AAA9A3");
+        placeholder.FontStyle=FontStyles.Italic;placeholder.Margin=new Thickness(11,9,0,0);placeholder.IsHitTestVisible=false;
+        entry.Children.Add(placeholder);
+        input.TextChanged+=(s,e)=>placeholder.Visibility=input.Text.Length==0?Visibility.Visible:Visibility.Collapsed;
+        commandBody.Children.Add(entry);
+
+        var mainActions=new DockPanel {LastChildFill=false,Margin=new Thickness(0,7,0,0)};
+        send=TerminalButton("发送 ▶",Ask);send.Foreground=Ui.Brush("#FFC844");send.FontWeight=FontWeights.Bold;
+        send.FontStyle=FontStyles.Italic;send.MinWidth=82;send.Margin=new Thickness(6,0,0,0);
+        DockPanel.SetDock(send,Dock.Right);mainActions.Children.Add(send);
+        var stop=TerminalButton("停止",()=>{StopChat();StopSpeech();});DockPanel.SetDock(stop,Dock.Right);mainActions.Children.Add(stop);
+        mainActions.Children.Add(TerminalButton("朗读输入",()=>Speak(input.Text,null)));
+        mainActions.Children.Add(TerminalButton("重播回复",()=>{if(lastAnswer.Length>0)Speak(lastAnswer,null);}));
+        commandBody.Children.Add(mainActions);Grid.SetRow(commandDeck,2);chat.Children.Add(commandDeck);
+        readAnswers=Ui.Check("自动朗读回复",prefs.ReadAnswers,value=>{prefs.ReadAnswers=value;SaveUi();});
+        readAnswers.Foreground=Ui.Brush("#CCCBC5");readAnswers.Margin=new Thickness(3,7,0,1);
+        readAnswers.ToolTip="自动朗读回复前 600 字";Grid.SetRow(readAnswers,3);chat.Children.Add(readAnswers);
+        settingsScroll=settings;
+        var pageButtons=new List<Button>();
+        Action<StackPanel,Button> showPage=(page,active)=>{
+            selectTab(true);
+            if(settings.Content!=page){settings.Content=page;settings.ScrollToTop();}
+            foreach(var button in pageButtons){
+                bool selected=button==active;
+                button.Foreground=Ui.Brush(selected?"#FFC844":"#CDCDC7");
+                button.BorderBrush=Ui.Brush(selected?"#FFC844":"#454543");
+            }
+        };
+        Func<string,UIElement[],Action> addPage=(caption,sections)=>{
+            var body=new StackPanel {Margin=new Thickness(0,0,7,8)};
+            foreach(var section in sections)body.Children.Add(section);
+            Button button=null;
+            Action open=()=>showPage(body,button);
+            button=TerminalButton(caption,open);
+            button.Margin=new Thickness(0,0,0,5);button.Padding=new Thickness(6,8,6,8);
+            navigation.Children.Add(button);pageButtons.Add(button);
+            return open;
+        };
+        var sizeSection=Ui.Section("桌宠大小","APPEARANCE / 连续调节");var sizeLabel=Ui.Text(((int)prefs.Scale)+" px",20,"#FFC844");sizeSection.Children.Add(sizeLabel);
         var sizeSlider=new Slider {Minimum=32,Maximum=DockLayout.MaximumSize(DockLayout.Area(this)),Value=Math.Max(32,Math.Min(DockLayout.MaximumSize(DockLayout.Area(this)),prefs.Scale)),TickFrequency=1,IsSnapToTickEnabled=true,Margin=new Thickness(0,12,0,14)};System.Windows.Automation.AutomationProperties.SetName(sizeSlider,"桌宠尺寸，32 到 "+sizeSlider.Maximum+" 像素");sizeSlider.ValueChanged+=(s,e)=>{SetPetSize(sizeSlider.Value,false);sizeLabel.Text=((int)prefs.Scale)+" px";};sizeSlider.LostMouseCapture+=(s,e)=>{if(!Program.Preview)SavePosition();};sizeSlider.PreviewKeyUp+=(s,e)=>{if(!Program.Preview)SavePosition();};sizeSection.Children.Add(sizeSlider);
         refreshPetSize=()=>{sizeSlider.Maximum=DockLayout.MaximumSize(DockLayout.Area(this));if(sizeSlider.Value!=prefs.Scale)sizeSlider.Value=prefs.Scale;sizeLabel.Text=((int)prefs.Scale)+" px / 上限 "+sizeSlider.Maximum+" px";};refreshPetSize();
-        var presets=new StackPanel {Orientation=Orientation.Horizontal};foreach(var size in new[]{64,180,240}){var value=size;var preset=Ui.Button((size==64?"小":size==180?"中":"大")+" / "+size,()=>{sizeSlider.Value=value;SetPetSize(value,true);});preset.MinWidth=94;presets.Children.Add(preset);}sizeSection.Children.Add(presets);settingsBody.Children.Add(sizeSection);
+        var presets=new WrapPanel();foreach(var size in new[]{64,180,240}){var value=size;var preset=TerminalButton((size==64?"小":size==180?"中":"大")+" / "+size,()=>{sizeSlider.Value=value;SetPetSize(value,true);});preset.MinWidth=94;presets.Children.Add(preset);}sizeSection.Children.Add(presets);
         var voiceSection=Ui.Section("Fairy 语音","VOICE / 本机合成与原作片段");var volumeLabel=Ui.Text("音量 "+Math.Round(prefs.Volume*100)+"%",13);voiceSection.Children.Add(volumeLabel);var volume=new Slider {Minimum=0,Maximum=1,Value=prefs.Volume,Margin=new Thickness(0,12,0,16)};volume.ValueChanged+=(s,e)=>{prefs.Volume=volume.Value;player.Volume=prefs.Volume;volumeLabel.Text="音量 "+Math.Round(prefs.Volume*100)+"%";};volume.LostMouseCapture+=(s,e)=>SaveUi();voiceSection.Children.Add(volume);
         voiceSection.Children.Add(Ui.Check("空闲时播放待机语音",prefs.Idle,value=>{prefs.Idle=value;SaveUi();Touch();}));
         var intervalLabel=Ui.Text("待机间隔 "+prefs.IdleMinutes+" 分钟",13);voiceSection.Children.Add(intervalLabel);
         var intervalSlider=new Slider {Minimum=1,Maximum=60,Value=prefs.IdleMinutes,TickFrequency=1,IsSnapToTickEnabled=true,Margin=new Thickness(0,10,0,12)};System.Windows.Automation.AutomationProperties.SetName(intervalSlider,"待机语音间隔，1 到 60 分钟");voiceSection.Children.Add(intervalSlider);
         idleIntervalSlider=intervalSlider;
         var intervalRow=new WrapPanel {Margin=new Thickness(0,4,0,12)};var intervalButtons=new List<Button>();
-        refreshIdle=()=>{intervalLabel.Text="待机间隔 "+prefs.IdleMinutes+" 分钟";if((int)intervalSlider.Value!=prefs.IdleMinutes)intervalSlider.Value=prefs.IdleMinutes;foreach(var b in intervalButtons){bool chosen=(int)b.Tag==prefs.IdleMinutes;b.BorderBrush=chosen?Ui.Brush("#80D8EE"):Ui.Brush("#344658");b.Foreground=chosen?Ui.Brush("#A3E5F5"):Ui.Brush("#9AAEBC");}};
+        refreshIdle=()=>{intervalLabel.Text="待机间隔 "+prefs.IdleMinutes+" 分钟";if((int)intervalSlider.Value!=prefs.IdleMinutes)intervalSlider.Value=prefs.IdleMinutes;foreach(var b in intervalButtons){bool chosen=(int)b.Tag==prefs.IdleMinutes;b.BorderBrush=chosen?Ui.Brush("#FFC844"):Ui.Brush("#454543");b.Foreground=chosen?Ui.Brush("#FFC844"):Ui.Brush("#CDCDC7");}};
         intervalSlider.ValueChanged+=(s,e)=>SetIdleMinutes((int)Math.Round(intervalSlider.Value),true);
-        foreach(var minutes in new[]{1,5,10,20,30}){var value=minutes;var b=Ui.Button(minutes+" 分钟",()=>SetIdleMinutes(value,true));b.Tag=value;b.Padding=new Thickness(10,7,10,7);b.Margin=new Thickness(0,0,8,6);intervalButtons.Add(b);intervalRow.Children.Add(b);}voiceSection.Children.Add(intervalRow);refreshIdle();
+        foreach(var minutes in new[]{1,5,10,20,30}){var value=minutes;var b=TerminalButton(minutes+" 分钟",()=>SetIdleMinutes(value,true));b.Tag=value;b.Padding=new Thickness(10,7,10,7);b.Margin=new Thickness(0,0,8,6);intervalButtons.Add(b);intervalRow.Children.Add(b);}voiceSection.Children.Add(intervalRow);refreshIdle();
         var idleNote=Ui.Text("空闲达到所设时间后随机播放；每组播完后重新计时。对话、朗读、输入操作时暂停，隐藏桌宠时不播放。已导入原声 "+idleCatalog.Clips.Count+" 组；未导入时使用本机合成台词。",11,"#8196A6");idleNote.Margin=new Thickness(0,0,0,12);voiceSection.Children.Add(idleNote);
-        var previews=new StackPanel {Orientation=Orientation.Horizontal};previews.Children.Add(Ui.Button("试听 Fairy",()=>Speak("主人，我是 Fairy。语音已就绪。",null)));previews.Children.Add(Ui.Button("试听原作",()=>Speak(null,Original())));previews.Children.Add(Ui.Button("预览提示",()=>SayBubble("主人，正在为您保持待命。需要帮助时，随时叫我。")));voiceSection.Children.Add(previews);settingsBody.Children.Add(voiceSection);
+        var previews=new WrapPanel();previews.Children.Add(TerminalButton("试听 Fairy",()=>Speak("主人，我是 Fairy。语音已就绪。",null)));previews.Children.Add(TerminalButton("试听原作",()=>Speak(null,Original())));previews.Children.Add(TerminalButton("预览提示",()=>SayBubble("主人，正在为您保持待命。需要帮助时，随时叫我。")));voiceSection.Children.Add(previews);
         var connection=Ui.Section("对话连接","CONNECTION / 每个入口独立保留上下文");var ds=new StackPanel();var keyLabel=Ui.Text("在这里粘贴 DeepSeek API Key",13,"#B9D9E8");keyLabel.Margin=new Thickness(0,0,0,7);ds.Children.Add(keyLabel);apiKey=new PasswordBox {Password=sessionKey,Padding=new Thickness(10),Background=Ui.Brush("#0D151E"),Foreground=Brushes.White,BorderBrush=Ui.Brush("#649DB7"),FontSize=15};System.Windows.Automation.AutomationProperties.SetName(apiKey,"DeepSeek API Key");ds.Children.Add(apiKey);var modelLabel=Ui.Text("模型名称",12,"#9FB7C7");modelLabel.Margin=new Thickness(0,12,0,7);ds.Children.Add(modelLabel);model=Ui.Box(prefs.DeepSeekModel,42);model.AcceptsReturn=false;model.Padding=new Thickness(10,8,10,8);model.VerticalScrollBarVisibility=ScrollBarVisibility.Disabled;ds.Children.Add(model);var keyNote=Ui.Text("粘贴 Key 后点击下方按钮。本次运行内保留，不写入文件。",11,"#8196A6");keyNote.Margin=new Thickness(0,8,0,0);ds.Children.Add(keyNote);
-        var applyKey=Ui.Button("应用并返回对话",()=>{if(string.IsNullOrWhiteSpace(apiKey.Password))return;sessionKey=apiKey.Password.Trim();apiKey.Password=sessionKey;prefs.DeepSeekModel=model.Text.Trim();SaveUi();selectTab(false);providerNote.Text="DEEPSEEK / Key 已填写";SetStatus("DeepSeek Key 已应用，可发送消息。");});connectionApply=applyKey;applyKey.IsEnabled=!string.IsNullOrWhiteSpace(apiKey.Password);applyKey.Margin=new Thickness(0,12,0,0);applyKey.HorizontalAlignment=HorizontalAlignment.Left;ds.Children.Add(applyKey);apiKey.PasswordChanged+=(s,e)=>{applyKey.IsEnabled=!string.IsNullOrWhiteSpace(apiKey.Password);};connection.Children.Add(ds);
-        var codexNote=Ui.Text("Codex 沿用本机 ChatGPT 登录。对话使用订阅额度，语音由本机 Fairy 模型合成。",13,"#A8BECC");codexNote.LineHeight=23;connection.Children.Add(codexNote);settingsBody.Children.Add(connection);
-        showConnection=()=>{selectTab(true);settings.ScrollToTop();if(!Program.Preview)apiKey.Focus();};
-        Action updateProvider=()=>{prefs.Provider=(string)providers.SelectedItem;if(composer!=null)composer.UpdateProvider(prefs.Provider);bool useCodex=prefs.Provider=="Codex";codex.BorderBrush=useCodex?Ui.Brush("#8EDFF7"):Ui.Brush("#344658");deepseek.BorderBrush=!useCodex?Ui.Brush("#8EDFF7"):Ui.Brush("#344658");codex.Background=Ui.Brush(useCodex?"#193546":"#121E2A");deepseek.Background=Ui.Brush(useCodex?"#121E2A":"#193546");providerNote.Text=useCodex?"CODEX / 本机 ChatGPT 登录":string.IsNullOrWhiteSpace(apiKey.Password)?"DEEPSEEK / 请先点击「配置 Key」":"DEEPSEEK / Key 已填写";configureKey.Visibility=useCodex?Visibility.Collapsed:Visibility.Visible;ds.Visibility=useCodex?Visibility.Collapsed:Visibility.Visible;codexNote.Visibility=useCodex?Visibility.Visible:Visibility.Collapsed;settingsBody.Children.Remove(connection);if(useCodex)settingsBody.Children.Add(connection);else settingsBody.Children.Insert(0,connection);SaveUi();};
-        providers.SelectionChanged+=(s,e)=>{StopChat();UpdateSources(new List<WebSource>());updateProvider();output.Text="主人，已切换到 "+prefs.Provider+"。您可以继续提问。";if(prefs.Provider=="DeepSeek"&&string.IsNullOrWhiteSpace(apiKey.Password))showConnection();else selectTab(false);};updateProvider();if(prefs.Provider=="DeepSeek"&&string.IsNullOrWhiteSpace(apiKey.Password))showConnection();else selectTab(false);
-        var footer=new DockPanel {Margin=new Thickness(22,0,22,0)};var live=Ui.Caption("● LOCAL VOICE");live.Foreground=Ui.Brush("#75CDE7");live.VerticalAlignment=VerticalAlignment.Center;DockPanel.SetDock(live,Dock.Right);footer.Children.Add(live);panelStatus=Ui.Text(lastStatus,11,"#8CA4B4");panelStatus.TextTrimming=TextTrimming.CharacterEllipsis;panelStatus.TextWrapping=TextWrapping.NoWrap;panelStatus.VerticalAlignment=VerticalAlignment.Center;footer.Children.Add(panelStatus);Grid.SetRow(footer,4);layout.Children.Add(footer);
+        var applyKey=TerminalButton("应用并返回对话",()=>{if(string.IsNullOrWhiteSpace(apiKey.Password))return;sessionKey=apiKey.Password.Trim();apiKey.Password=sessionKey;prefs.DeepSeekModel=model.Text.Trim();SaveUi();selectTab(false);providerNote.Text="DEEPSEEK / Key 已填写";SetStatus("DeepSeek Key 已应用，可发送消息。");});connectionApply=applyKey;applyKey.IsEnabled=!string.IsNullOrWhiteSpace(apiKey.Password);applyKey.Margin=new Thickness(0,12,0,0);applyKey.HorizontalAlignment=HorizontalAlignment.Left;ds.Children.Add(applyKey);apiKey.PasswordChanged+=(s,e)=>{applyKey.IsEnabled=!string.IsNullOrWhiteSpace(apiKey.Password);};connection.Children.Add(ds);
+        var codexNote=Ui.Text("Codex 沿用本机 ChatGPT 登录。对话使用订阅额度，语音由本机 Fairy 模型合成。",13,"#A8BECC");codexNote.LineHeight=23;connection.Children.Add(codexNote);
+        var showVoice=addPage("语音",new UIElement[]{voiceSection});
+        showAppearance=addPage("外观",new UIElement[]{sizeSection});
+        showScreenSettings=addPage("屏幕协作",new UIElement[]{ScreenSettings()});
+        showGameSettings=addPage("游戏陪伴",new UIElement[]{
+            GameSettings()
+        });
+        addPage("长期记忆",new UIElement[]{ScreenMemorySettings()});
+        var showConnectionPage=addPage("模型与联网",new UIElement[]{connection,WebSettings()});
+        showVoice();
+        showConnection=()=>{showConnectionPage();settings.ScrollToTop();if(!Program.Preview&&apiKey.IsVisible)apiKey.Focus();};
+        Action updateProvider=()=>{prefs.Provider=(string)providers.SelectedItem;if(composer!=null)composer.UpdateProvider(prefs.Provider);bool useCodex=prefs.Provider=="Codex";codex.BorderBrush=Ui.Brush(useCodex?"#FFC844":"#555654");deepseek.BorderBrush=Ui.Brush(useCodex?"#555654":"#FFC844");codex.Foreground=Ui.Brush(useCodex?"#FFC844":"#CDCDC7");deepseek.Foreground=Ui.Brush(useCodex?"#CDCDC7":"#FFC844");providerNote.Text=useCodex?"CODEX / 本机 ChatGPT 登录":string.IsNullOrWhiteSpace(apiKey.Password)?"DEEPSEEK / 请先点击「配置 Key」":"DEEPSEEK / Key 已填写";configureKey.Visibility=useCodex?Visibility.Collapsed:Visibility.Visible;ds.Visibility=useCodex?Visibility.Collapsed:Visibility.Visible;codexNote.Visibility=useCodex?Visibility.Visible:Visibility.Collapsed;SaveUi();};
+        providers.SelectionChanged+=(s,e)=>{SetScreenEnabled(false);StopChat();UpdateSources(new List<WebSource>());updateProvider();output.Text="主人，已切换到 "+prefs.Provider+"。您可以继续提问。";if(prefs.Provider=="DeepSeek"&&string.IsNullOrWhiteSpace(apiKey.Password))showConnection();else selectTab(false);};updateProvider();if(prefs.Provider=="DeepSeek"&&string.IsNullOrWhiteSpace(apiKey.Password))showConnection();else selectTab(false);
+        var footer=new DockPanel {Margin=new Thickness(22,0,22,0)};var live=TerminalCaption("●  本机语音");live.Foreground=Ui.Brush("#FFC844");live.VerticalAlignment=VerticalAlignment.Center;DockPanel.SetDock(live,Dock.Right);footer.Children.Add(live);panelStatus=Ui.Text(lastStatus,11,"#B8B7B2");panelStatus.TextTrimming=TextTrimming.CharacterEllipsis;panelStatus.TextWrapping=TextWrapping.NoWrap;panelStatus.VerticalAlignment=VerticalAlignment.Center;footer.Children.Add(panelStatus);Grid.SetRow(footer,4);layout.Children.Add(footer);
         panel.Closed+=(s,e)=>{StopChat();sessionKey=apiKey.Password;prefs.DeepSeekModel=model.Text.Trim();SaveUi();panelStatus=null;panel=null;};
+        if(Program.UiCheck)panel.Title="Fairy · UI Check";
         if(!Program.Preview){panel.Show();panel.Activate();}
     }
     void SaveUi(){if(!Program.Preview)prefs.Save();}
@@ -172,7 +273,8 @@ public sealed partial class Pet {
         var sendPoint=send.TranslatePoint(new Point(0,send.ActualHeight),(FrameworkElement)panel.Content);
         if(sendPoint.Y>620||sendPoint.X+send.ActualWidth>480||output.ActualHeight<75)throw new Exception("Compact conversation layout failed");
         showSettings();Render((FrameworkElement)panel.Content,Path.Combine(dir,"settings.png"),540,740);
-        var previousInterval=prefs.IdleMinutes;SetIdleMinutes(1,false);if(idleIntervalSlider.Value!=1||idleMenuItems.Count(m=>m.IsChecked)!=1||!(bool)idleMenuItems[0].IsChecked)throw new Exception("One-minute idle control sync failed");idleIntervalSlider.Value=37;if(prefs.IdleMinutes!=37||idleMenuItems.Any(m=>m.IsChecked))throw new Exception("Custom idle interval failed");SetIdleMinutes(previousInterval,false);settingsScroll.ScrollToVerticalOffset(390);panel.UpdateLayout();Render((FrameworkElement)panel.Content,Path.Combine(dir,"settings-idle.png"),540,740);settingsScroll.ScrollToTop();
+        Render((FrameworkElement)panel.Content,Path.Combine(dir,"settings-small.png"),480,620);
+        var previousInterval=prefs.IdleMinutes;SetIdleMinutes(1,false);if(idleIntervalSlider.Value!=1||idleMenuItems.Count(m=>m.IsChecked)!=1||!(bool)idleMenuItems[0].IsChecked)throw new Exception("One-minute idle control sync failed");idleIntervalSlider.Value=37;if(prefs.IdleMinutes!=37||idleMenuItems.Any(m=>m.IsChecked))throw new Exception("Custom idle interval failed");SetIdleMinutes(previousInterval,false);settingsScroll.ScrollToTop();panel.UpdateLayout();Render((FrameworkElement)panel.Content,Path.Combine(dir,"settings-idle.png"),540,740);settingsScroll.ScrollToTop();
         providers.SelectedItem="DeepSeek";showConnection();Render((FrameworkElement)panel.Content,Path.Combine(dir,"deepseek.png"),540,740);
         var keyPoint=apiKey.TranslatePoint(new Point(0,apiKey.ActualHeight),(FrameworkElement)panel.Content);if(keyPoint.Y>500||apiKey.ActualHeight<25)throw new Exception("DeepSeek Key must be visible without scrolling");
         var previousKey=sessionKey;apiKey.Password="ui-test-placeholder";connectionApply.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));if(sessionKey!="ui-test-placeholder")throw new Exception("DeepSeek Key apply failed");apiKey.Password=previousKey;sessionKey=previousKey;

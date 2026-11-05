@@ -1,11 +1,12 @@
+param([string]$OutputName = 'FairyPet.exe')
 $ErrorActionPreference='Stop'
 $petRoot=Split-Path $PSScriptRoot -Parent
-& (Join-Path $petRoot 'build.ps1')
+& (Join-Path $petRoot 'build.ps1') -OutputName $OutputName
 if($LASTEXITCODE -ne 0){throw 'Build failed.'}
-$petExe=Join-Path $petRoot 'FairyPet.exe'
+$petExe=Join-Path $petRoot $OutputName
 $petPreferences=Join-Path $env:LOCALAPPDATA 'CodexFairyPet\preferences.json'
 $petBefore=if(Test-Path -LiteralPath $petPreferences){(Get-FileHash -LiteralPath $petPreferences).Hash}else{$null}
-foreach($petMode in @('--self-test','--render-ui')){
+foreach($petMode in @('--self-test','--render-ui','--test-screen')){
     $petProcess=Start-Process -FilePath $petExe -ArgumentList $petMode -Wait -PassThru -WindowStyle Hidden
     if($petProcess.ExitCode -ne 0){throw "Test failed: $petMode (exit $($petProcess.ExitCode))"}
 }

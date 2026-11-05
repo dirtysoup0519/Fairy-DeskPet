@@ -136,3 +136,9 @@ automation*.json
 /AGENTS.md
 /PLAN.md
 /MEMORY.md
+screen-cache/
+screen-captures/
+screenshots/
+captures/
+*.screen.png
+screen-memory.dat*

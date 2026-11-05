@@ -32,8 +32,9 @@ public static class DeepSeekWebChat {
         new {type="function",function=new {name="web_search",description="Search current public web information. Use for explicit search requests, recent facts and source verification. Keep private information out of queries.",parameters=new {type="object",properties=new {query=new {type="string",minLength=1,maxLength=128}},required=new[]{"query"},additionalProperties=false}}},
         new {type="function",function=new {name="web_fetch",description="Read a public HTTP(S) page, including a URL supplied by the user or returned by search.",parameters=new {type="object",properties=new {url=new {type="string",minLength=1,maxLength=8192}},required=new[]{"url"},additionalProperties=false}}}
     };}
-    public static async Task<DeepSeekWebResult> Run(string model,string persona,List<Dictionary<string,string>> history,bool enabled,Func<string,object,CancellationToken,Task<string>> post,Action<string> status,CancellationToken token){
+    public static async Task<DeepSeekWebResult> Run(string model,string persona,List<Dictionary<string,string>> history,bool enabled,Func<string,object,CancellationToken,Task<string>> post,Action<string> status,CancellationToken token,ScreenAttachment screen=null){
         var result=new DeepSeekWebResult();var messages=new List<Dictionary<string,object>> {new Dictionary<string,object>{{"role","system"},{"content",persona}}};foreach(var turn in history)messages.Add(turn.ToDictionary(x=>x.Key,x=>(object)x.Value));int totalCalls=0;
+        if(screen!=null){enabled=false;var last=messages.Last(m=>(string)m["role"]=="user");last["content"]=new object[]{new {type="text",text=last["content"].ToString()+"\n"+screen.Description},new {type="image_url",image_url=new {url=screen.DataUrl}}};}
         for(int round=0;round<3;round++){
             token.ThrowIfCancellationRequested();var request=new Dictionary<string,object>{{"model",model},{"messages",messages},{"stream",false},{"max_tokens",1600},{"thinking",new {type="disabled"}}};if(enabled){request["tools"]=Tools();request["tool_choice"]=round<2?"auto":"none";}
             var payload=Json.Parse<Dictionary<string,object>>(await post("/chat/completions",request,token));var choices=(IList)payload["choices"];if(choices.Count==0)throw new Exception("DeepSeek 没有返回文本。");var message=(Dictionary<string,object>)((Dictionary<string,object>)choices[0])["message"];object callsValue;var calls=message.TryGetValue("tool_calls",out callsValue)?callsValue as IList:null;
@@ -55,8 +56,9 @@ public static class DeepSeekWebChat {
     }
 }
 public sealed class CodexWebOutput {
-    public string Answer="";public int Searches;public readonly SourceList Sources=new SourceList();
-    public void Accept(string line,Action<string> status){Dictionary<string,object> root;try{root=Json.Parse<Dictionary<string,object>>(line);}catch{return;}object v;if(!root.TryGetValue("item",out v))return;var item=v as Dictionary<string,object>;if(item==null)return;object type;item.TryGetValue("type",out type);var kind=type as string;
+    public string Answer="";public int Searches;public bool ImageReadFailed;public readonly SourceList Sources=new SourceList();
+    public static bool ImageFailure(string text){return Regex.IsMatch(text??"",@"could not read (?:the )?local image|unable to attach local image|(?:failed|unable) to (?:load|read|open|attach) (?:the |a |local )?image",RegexOptions.IgnoreCase);}
+    public void Accept(string line,Action<string> status){Dictionary<string,object> root;try{root=Json.Parse<Dictionary<string,object>>(line);}catch{if(ImageFailure(line))ImageReadFailed=true;return;}object eventType;root.TryGetValue("type",out eventType);if((string)eventType=="error"&&ImageFailure(line))ImageReadFailed=true;object v;if(!root.TryGetValue("item",out v))return;var item=v as Dictionary<string,object>;if(item==null)return;object type;item.TryGetValue("type",out type);var kind=type as string;if(kind=="error"&&ImageFailure(line))ImageReadFailed=true;
         if(kind=="web_search"){if((string)root["type"]=="item.completed")Searches++;if(status!=null)status("Fairy · 正在联网搜索…");FindSources(item);}
         if(kind=="agent_message"&&(string)root["type"]=="item.completed"){object text;if(item.TryGetValue("text",out text))Answer=text as string??"";}
     }
