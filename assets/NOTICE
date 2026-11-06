@@ -29,6 +29,7 @@ Generated derivatives covered by the same Apache-2.0 license/attribution:
 - assets/frames/dark/000.png through 119.png
 - assets/frames/light/000.png through 119.png
 - docs/vector-preview.png and docs/vector-idle.gif
+- assets/fairy.ico: Windows icon generated from this project's assets/frames/000.png.
 These are modified/adapted visual outputs, not original upstream binaries.
 Keep this NOTICE and licenses/ with copies of generated assets.
 

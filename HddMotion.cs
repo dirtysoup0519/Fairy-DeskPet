@@ -17,7 +17,7 @@ public sealed class HddMotion {
     public static double Frame(double p){return Ease(p/.30);}
     public static double Extension(double p){return Ease((p-.30)/.70);}
     public HddMotion(Action<double,double> apply,Action<bool> completed,double duration=.44){this.apply=apply;this.completed=completed;this.duration=duration;timer.Tick+=(s,e)=>{var now=clock.Elapsed.TotalSeconds;var elapsed=Math.Max(0,now-last);last=now;Advance(elapsed);};}
-    public void Play(bool open){target=open?1:0;if(!SystemParameters.ClientAreaAnimation){Snap(target);completed(open);return;}if(progress==target){completed(open);return;}last=0;clock.Restart();timer.Start();}
+    public void Play(bool open){target=open?1:0;if(!SystemParameters.ClientAreaAnimation||progress==target){Snap(target);completed(open);return;}last=0;clock.Restart();timer.Start();}
     void Advance(double seconds){var step=seconds/duration;progress=target>progress?Math.Min(target,progress+step):Math.Max(target,progress-step);apply(Frame(progress),Extension(progress));if(progress==target){timer.Stop();clock.Stop();completed(target==1);}}
     public void Stop(){timer.Stop();clock.Stop();}
     public void Snap(double value){Stop();progress=target=Math.Max(0,Math.Min(1,value));apply(Frame(progress),Extension(progress));}
@@ -66,7 +66,43 @@ public sealed class HddInputSurface : Border {
 }
 public sealed partial class Pet {
     readonly FairyFrame fairyFrame=new FairyFrame {IsHitTestVisible=false};double captionFrame,inputFrame;
-    void SetFrame(bool caption,double value){if(caption)captionFrame=value;else inputFrame=value;fairyFrame.Progress=Math.Max(captionFrame,inputFrame);}
+    HddMotion petMotion;
+    double entranceFrame;
+    bool exitAfterMotion;
+    void RefreshFairyFrame(){fairyFrame.Progress=Math.Max(entranceFrame,Math.Max(captionFrame,inputFrame));}
+    void SetFrame(bool caption,double value){if(caption)captionFrame=value;else inputFrame=value;RefreshFairyFrame();}
+    void InitializePetMotion(Grid root){
+        var aperture=new ScaleTransform(1,1);
+        eye.RenderTransformOrigin=new Point(.5,.5);
+        eye.RenderTransform=aperture;
+        petMotion=new HddMotion((rim,opening)=>{
+            entranceFrame=rim*(1-opening);
+            RefreshFairyFrame();
+            aperture.ScaleX=.76+.24*opening;
+            aperture.ScaleY=.06+.94*opening;
+            eye.Opacity=opening;
+            root.IsHitTestVisible=petMotion.Opening&&opening>=.98;
+        },open=>{
+            if(open){Touch();return;}
+            if(exitAfterMotion)Close();
+            else Hide();
+        },.52);
+        petMotion.Snap(Program.Preview?1:0);
+    }
+    void ShowPet(){
+        if(exitAfterMotion)return;
+        if(!IsVisible)Show();
+        petMotion.Play(true);
+    }
+    void RetractPet(bool exit){
+        if(exitAfterMotion)return;
+        exitAfterMotion=exit;
+        if(!IsVisible){if(exit)Close();return;}
+        SetScreenEnabled(false);
+        if(hint!=null)hint.Dismiss();
+        if(composer!=null)composer.Dismiss();
+        petMotion.Play(false);
+    }
     void RenderHddMotion(string dir){
         HddMotion.Verify();var stages=new[]{0.0,.12,.28,.40,.60,.80,1.0,.80,.60,.40,.28,.12,0.0};
         foreach(var right in new[]{false,true})for(int i=0;i<stages.Length;i++){
